@@ -1,0 +1,74 @@
+version: "3.3"
+
+services:
+  app:
+    image: dtr-beta.demo.dckr.org/demo-aws/docker-demo:latest
+    deploy:
+      mode: replicated
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 5s
+        failure_action: continue
+      labels:
+        - "com.docker.lb.hosts=docker-demo-aws.beta.demo.dckr.org"
+        - "com.docker.lb.port=8080"
+    environment:
+      - "TITLE=Docker Demo - AWS"
+      - "DB_HOST=db"
+      - "DB_PORT=5432"
+      - "DB_NAME=demo"
+      - "DB_SSL_MODE=disable"
+    secrets:
+      - source: DB_USER
+        target: DB_USER
+        uid: "0"
+        gid: "0"
+        mode: 0400
+      - source: DB_PASS
+        target: DB_PASS
+        uid: "0"
+        gid: "0"
+        mode: 0400
+    networks:
+      - docker-demo-aws
+  db:
+    image: postgres:latest
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+    environment:
+      - "POSTGRES_USER_FILE=/run/secrets/DB_USER"
+      - "POSTGRES_PASSWORD_FILE=/run/secrets/DB_PASS"
+    secrets:
+      - source: DB_USER
+        target: DB_USER
+        uid: "999"
+        gid: "999"
+        mode: 0400
+      - source: DB_PASS
+        target: DB_PASS
+        uid: "999"
+        gid: "999"
+        mode: 0400
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - docker-demo-aws
+
+volumes:
+  postgres-data:
+    driver: local
+
+networks:
+  docker-demo-aws:
+    driver: overlay
+
+secrets:
+  DB_USER:
+    file: ./username
+  DB_PASS:
+    file: ./password
