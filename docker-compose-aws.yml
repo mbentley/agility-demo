@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   app:
-    image: dtr-beta.demo.dckr.org/demo-aws/docker-demo:latest
+    image: dtr.aws.demo.dckr.org/demo-aws/docker-demo:latest
     deploy:
       mode: replicated
       replicas: 2
@@ -11,7 +11,7 @@ services:
         delay: 5s
         failure_action: continue
       labels:
-        - "com.docker.lb.hosts=docker-demo-aws.beta.demo.dckr.org"
+        - "com.docker.lb.hosts=docker-demo.aws.demo.dckr.org"
         - "com.docker.lb.port=8080"
     environment:
       - "TITLE=Docker Demo - AWS"

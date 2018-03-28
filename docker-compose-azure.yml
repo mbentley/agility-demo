@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   app:
-    image: dtr-beta.demo.dckr.org/demo-azure/docker-demo:latest
+    image: dtr.azure.demo.dckr.org/demo-azure/docker-demo:latest
     deploy:
       mode: replicated
       replicas: 2
@@ -11,10 +11,10 @@ services:
         delay: 5s
         failure_action: continue
       labels:
-        - "com.docker.lb.hosts=docker-demo-azure.beta.demo.dckr.org"
+        - "com.docker.lb.hosts=docker-demo.azure.demo.dckr.org"
         - "com.docker.lb.port=8080"
     environment:
-      - "TITLE=Docker Demo - AWS"
+      - "TITLE=Docker Demo - Azure"
       - "DB_HOST=db"
       - "DB_PORT=5432"
       - "DB_NAME=demo"
